@@ -57,12 +57,20 @@ export const actions: Actions = {
       })
     }
 
+    const gradeNumber = Number(grade)
+
+    if (gradeNumber < 0 || gradeNumber > 4) {
+      return fail(400, {
+        message: 'The grade must be between 0 and 4.',
+      })
+    }
+
     await db.user.update({
       where: {
         userId: user.userId,
       },
       data: {
-        grade: Number(grade),
+        grade: gradeNumber,
       },
     })
 
