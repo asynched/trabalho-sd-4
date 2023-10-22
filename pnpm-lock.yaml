@@ -10,12 +10,18 @@ dependencies:
     version: 1.5.1
 
 devDependencies:
+  '@prisma/client':
+    specifier: ^5.4.2
+    version: 5.4.2(prisma@5.4.2)
   '@sveltejs/adapter-auto':
     specifier: ^2.0.0
     version: 2.1.0(@sveltejs/kit@1.26.0)
   '@sveltejs/kit':
     specifier: ^1.20.4
     version: 1.26.0(svelte@4.2.2)(vite@4.5.0)
+  prisma:
+    specifier: ^5.4.2
+    version: 5.4.2
   svelte:
     specifier: ^4.0.5
     version: 4.2.2
@@ -298,6 +304,29 @@ packages:
 
   /@polka/url@1.0.0-next.23:
     resolution: {integrity: sha512-C16M+IYz0rgRhWZdCmK+h58JMv8vijAA61gmz2rspCSwKwzBebpdcsiUmwrtJRdphuY30i6BSLEOP8ppbNLyLg==}
+    dev: true
+
+  /@prisma/client@5.4.2(prisma@5.4.2):
+    resolution: {integrity: sha512-2xsPaz4EaMKj1WS9iW6MlPhmbqtBsXAOeVttSePp8vTFTtvzh2hZbDgswwBdSCgPzmmwF+tLB259QzggvCmJqA==}
+    engines: {node: '>=16.13'}
+    requiresBuild: true
+    peerDependencies:
+      prisma: '*'
+    peerDependenciesMeta:
+      prisma:
+        optional: true
+    dependencies:
+      '@prisma/engines-version': 5.4.1-2.ac9d7041ed77bcc8a8dbd2ab6616b39013829574
+      prisma: 5.4.2
+    dev: true
+
+  /@prisma/engines-version@5.4.1-2.ac9d7041ed77bcc8a8dbd2ab6616b39013829574:
+    resolution: {integrity: sha512-wvupDL4AA1vf4TQNANg7kR7y98ITqPsk6aacfBxZKtrJKRIsWjURHkZCGcQliHdqCiW/hGreO6d6ZuSv9MhdAA==}
+    dev: true
+
+  /@prisma/engines@5.4.2:
+    resolution: {integrity: sha512-fqeucJ3LH0e1eyFdT0zRx+oETLancu5+n4lhiYECyEz6H2RDskPJHJYHkVc0LhkU4Uv7fuEnppKU3nVKNzMh8g==}
+    requiresBuild: true
     dev: true
 
   /@sveltejs/adapter-auto@2.1.0(@sveltejs/kit@1.26.0):
@@ -865,6 +894,15 @@ packages:
       nanoid: 3.3.6
       picocolors: 1.0.0
       source-map-js: 1.0.2
+    dev: true
+
+  /prisma@5.4.2:
+    resolution: {integrity: sha512-GDMZwZy7mysB2oXU+angQqJ90iaPFdD0rHaZNkn+dio5NRkGLmMqmXs31//tg/qXT3iB0cTQwnGGQNuirhSTZg==}
+    engines: {node: '>=16.13'}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      '@prisma/engines': 5.4.2
     dev: true
 
   /proxy-from-env@1.1.0:

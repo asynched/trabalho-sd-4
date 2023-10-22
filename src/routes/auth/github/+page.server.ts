@@ -1,6 +1,11 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
-import { getAccessToken } from '@/routes/services/github/auth'
+import {
+  getUserProfileFromCode,
+  type UserResponse,
+} from '@/services/github/auth'
+import { db } from '@/services/prisma/client'
+import { getAvatarFromInitials } from '@/services/dicebear/avatars'
 
 export const load: PageServerLoad = async (event) => {
   const code = event.url.searchParams.get('code')
@@ -9,16 +14,38 @@ export const load: PageServerLoad = async (event) => {
     throw redirect(301, '/')
   }
 
-  const token = await getAccessToken(code)
+  const profile = await getUserProfileFromCode(code)
 
-  if (!token) {
+  if (!profile) {
     throw redirect(301, '/auth/fail')
   }
 
-  event.cookies.set('access_token', token, {
-    httpOnly: true,
-    secure: true,
+  const user = await findOrCreateUser(profile)
+
+  const session = await db.session.create({
+    data: {
+      userId: user.userId,
+    },
   })
 
-  throw redirect(301, '/home')
+  event.cookies.set('session', session.sessionId, {
+    httpOnly: true,
+    path: '/',
+  })
+
+  return {}
+}
+
+function findOrCreateUser(user: UserResponse) {
+  return db.user.upsert({
+    where: { username: user.login },
+    create: {
+      avatar: user.avatar_url || getAvatarFromInitials(user.name),
+      name: user.name,
+      username: user.login,
+      githubApiProfileUrl: user.url,
+      githubProfileUrl: user.html_url,
+    },
+    update: {},
+  })
 }
