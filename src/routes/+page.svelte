@@ -14,7 +14,7 @@
       class="py-2 px-8 rounded border flex justify-center items-center gap-1 transition ease-in-out hover:shadow-md"
       href={`https://github.com/login/oauth/authorize?client_id=${env.PUBLIC_GITHUB_OAUTH_CLIENT_ID}`}
     >
-      <span> Login </span>
+      <span>Entrar com o GitHub</span>
       <img
         src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
         height="24"

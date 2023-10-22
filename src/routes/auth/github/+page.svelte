@@ -7,6 +7,7 @@
   onMount(() => {
     const interval = setInterval(() => {
       seconds--
+
       if (seconds === 0) {
         clearInterval(interval)
         goto('/app')
@@ -15,6 +16,9 @@
   })
 </script>
 
-<h1>
-  You'll be redirected to the home page in {seconds} seconds.
-</h1>
+<div class="grid place-items-center w-full h-screen">
+  <div class="text-center">
+    <h1 class="mb-2 text-4xl font-bold tracking-tighter">Sucesso</h1>
+    <p>Você será redirecionado para a<br />aplicação em {seconds} segundos.</p>
+  </div>
+</div>

@@ -2,11 +2,16 @@ import { Role } from '@/domain/auth'
 import type { Actions, PageServerLoad } from './$types'
 import { db } from '@/services/prisma/client'
 import type { User } from '@prisma/client'
-import { fail } from '@sveltejs/kit'
+import { fail, redirect } from '@sveltejs/kit'
 
 type Data = {
   user: User
-  grades?: { name: string; grade: number }[]
+  studentGrades?: {
+    name: string
+    grade: number
+    avatar: string
+    userId: string
+  }[]
 }
 
 export const load: PageServerLoad = async (event) => {
@@ -16,7 +21,7 @@ export const load: PageServerLoad = async (event) => {
     user,
   }
 
-  if (user.role === Role.TEACHER) {
+  if (user.role === Role.STUDENT) {
     const grades = await db.user.findMany({
       where: {
         role: Role.STUDENT,
@@ -24,17 +29,36 @@ export const load: PageServerLoad = async (event) => {
       select: {
         name: true,
         grade: true,
+        avatar: true,
+        userId: true,
       },
     })
 
-    data.grades = grades
+    data.studentGrades = grades
   }
 
   return data
 }
 
 export const actions: Actions = {
-  async default(event) {
+  async signOut(event) {
+    const user = event.locals.user
+
+    if (!user) {
+      return fail(400, {
+        message: 'You must be logged in to access this page.',
+      })
+    }
+
+    await db.session.delete({
+      where: {
+        sessionId: event.cookies.get('session'),
+      },
+    })
+
+    throw redirect(301, '/')
+  },
+  async update(event) {
     const user = event.locals.user
 
     if (!user) {
