@@ -1,6 +1,6 @@
-import type { User } from '@prisma/client'
 import { redirect, type Handle } from '@sveltejs/kit'
-import { db } from '@/services/prisma/client'
+import { getUserFromSession } from './services/drizzle/users'
+import type { User } from '@/db/schema/user'
 
 export const handle: Handle = async ({ event, resolve }) => {
   const isPrivate = event.url.pathname.includes('/app')
@@ -9,14 +9,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   const token = event.cookies.get('session')
 
   if (token) {
-    const session = await db.session.findUnique({
-      where: { sessionId: token },
-      include: {
-        user: true,
-      },
-    })
-
-    user = session?.user || null
+    user = await getUserFromSession(token)
   }
 
   event.locals.user = user

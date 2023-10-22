@@ -1,8 +1,10 @@
-import { Role } from '@/domain/auth'
 import type { Actions, PageServerLoad } from './$types'
-import { db } from '@/services/prisma/client'
 import type { User } from '@prisma/client'
+
+import { Role } from '@/domain/auth'
 import { fail, redirect } from '@sveltejs/kit'
+import { getUserGrades, updateGrade } from '@/services/drizzle/users'
+import { deleteSession } from '@/services/drizzle/session'
 
 type Data = {
   user: User
@@ -22,17 +24,7 @@ export const load: PageServerLoad = async (event) => {
   }
 
   if (user.role === Role.STUDENT) {
-    const grades = await db.user.findMany({
-      where: {
-        role: Role.STUDENT,
-      },
-      select: {
-        name: true,
-        grade: true,
-        avatar: true,
-        userId: true,
-      },
-    })
+    const grades = await getUserGrades()
 
     data.studentGrades = grades
   }
@@ -50,11 +42,15 @@ export const actions: Actions = {
       })
     }
 
-    await db.session.delete({
-      where: {
-        sessionId: event.cookies.get('session'),
-      },
-    })
+    const session = event.cookies.get('session')
+
+    if (!session) {
+      return fail(400, {
+        message: 'You must be logged in to access this page.',
+      })
+    }
+
+    await deleteSession(session)
 
     throw redirect(301, '/')
   },
@@ -89,14 +85,7 @@ export const actions: Actions = {
       })
     }
 
-    await db.user.update({
-      where: {
-        userId: user.userId,
-      },
-      data: {
-        grade: gradeNumber,
-      },
-    })
+    await updateGrade(user.userId, gradeNumber)
 
     return { success: true }
   },
