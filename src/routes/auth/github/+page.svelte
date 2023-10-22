@@ -9,7 +9,7 @@
       seconds--
       if (seconds === 0) {
         clearInterval(interval)
-        goto('/home')
+        goto('/app')
       }
     }, 1000)
   })

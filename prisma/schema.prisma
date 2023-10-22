@@ -15,8 +15,10 @@ model User {
   name     String
   username String @unique()
   avatar   String
+  role     String @default("guest") // guest, student, teacher
 
   session Session[]
+  grade   Int       @default(0)
 
   githubProfileUrl    String @map("github_profile_url")
   githubApiProfileUrl String @map("github_api_profile_url")
