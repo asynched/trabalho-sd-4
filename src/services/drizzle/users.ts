@@ -3,7 +3,7 @@ import { db } from '@/db/client'
 import { users } from '@/db/schema/user'
 import type { UserResponse } from '@/services/github/auth'
 import { getAvatarFromInitials } from '@/services/dicebear/avatars'
-import { Role } from '@/domain/auth'
+import { Role, students, teachers } from '@/domain/auth'
 import { sessions } from '@/db/schema/sessions'
 
 export async function findOrCreateUser(data: UserResponse) {
@@ -24,7 +24,11 @@ export async function findOrCreateUser(data: UserResponse) {
       avatar: data.avatar_url
         ? data.avatar_url
         : getAvatarFromInitials(data.name),
-      role: 'guest',
+      role: students.includes(data.login)
+        ? Role.STUDENT
+        : teachers.includes(data.login)
+        ? Role.TEACHER
+        : Role.GUEST,
       grade: 0,
     })
     .returning()
@@ -62,6 +66,7 @@ export async function getUserFromSession(sessionId: string) {
     .select()
     .from(users)
     .innerJoin(sessions, eq(sessions.sessionId, sessionId))
+    .limit(1)
 
-  return userResult[0].users
+  return userResult[0]?.users || null
 }

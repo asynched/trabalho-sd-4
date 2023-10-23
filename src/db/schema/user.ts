@@ -12,12 +12,12 @@ export const users = sqliteTable('users', {
     .notNull()
     .default('guest'),
   grade: integer('grade').notNull().default(0),
-  createdAt: integer('created_at', { mode: 'timestamp_ms' }).default(
-    sql`CURRENT_TIMESTAMP`,
-  ),
-  updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).default(
-    sql`CURRENT_TIMESTAMP`,
-  ),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
 })
 
 export type User = InferSelectModel<typeof users>

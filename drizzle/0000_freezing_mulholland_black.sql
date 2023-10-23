@@ -1,9 +1,9 @@
 CREATE TABLE `sessions` (
 	`session_id` text(32) PRIMARY KEY NOT NULL,
 	`user_id` text NOT NULL,
-	`created_at` integer DEFAULT CURRENT_TIMESTAMP,
-	`updated_at` integer DEFAULT CURRENT_TIMESTAMP,
-	FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON UPDATE no action ON DELETE no action
+	`created_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	`updated_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `users` (
@@ -13,8 +13,8 @@ CREATE TABLE `users` (
 	`avatar` text(255) NOT NULL,
 	`role` text DEFAULT 'guest' NOT NULL,
 	`grade` integer DEFAULT 0 NOT NULL,
-	`created_at` integer DEFAULT CURRENT_TIMESTAMP,
-	`updated_at` integer DEFAULT CURRENT_TIMESTAMP
+	`created_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	`updated_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `users_username_unique` ON `users` (`username`);

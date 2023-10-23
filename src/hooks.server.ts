@@ -1,5 +1,5 @@
 import { redirect, type Handle } from '@sveltejs/kit'
-import { getUserFromSession } from './services/drizzle/users'
+import { getUserFromSession } from '@/services/drizzle/users'
 import type { User } from '@/db/schema/user'
 
 export const handle: Handle = async ({ event, resolve }) => {
