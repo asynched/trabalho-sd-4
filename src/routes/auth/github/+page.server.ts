@@ -1,33 +1,34 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
-import {
-  getUserProfileFromCode,
-  type UserResponse,
-} from '@/services/github/auth'
-import { db } from '@/services/prisma/client'
-import { getAvatarFromInitials } from '@/services/dicebear/avatars'
-import { students, teachers } from '@/domain/auth'
+import { getUserProfileFromCode } from '@/services/github/auth'
+import { findOrCreateUser } from '@/services/drizzle/users'
+import { createSession } from '@/services/drizzle/session'
+import { logger } from '@/services/logger/client'
 
 export const load: PageServerLoad = async (event) => {
+  logger.info('New attempt to login with GitHub')
+
   const code = event.url.searchParams.get('code')
 
   if (!code) {
+    logger.error('Missing code parameter in GitHub callback')
     throw redirect(301, '/')
   }
 
+  logger.info('Attempting to retrieve profile from GitHub')
   const profile = await getUserProfileFromCode(code)
 
   if (!profile) {
+    logger.error('Failed to retrieve profile from GitHub')
     throw redirect(301, '/auth/fail')
   }
 
+  logger.info('Successfully retrieved profile from GitHub')
   const user = await findOrCreateUser(profile)
+  const session = await createSession(user.userId)
 
-  const session = await db.session.create({
-    data: {
-      userId: user.userId,
-    },
-  })
+  logger.info(`User '@${user.username}' signed in`)
+  logger.info(`User role: ${user.role}`)
 
   event.cookies.set('session', session.sessionId, {
     httpOnly: true,
@@ -35,23 +36,4 @@ export const load: PageServerLoad = async (event) => {
   })
 
   return {}
-}
-
-function findOrCreateUser(user: UserResponse) {
-  return db.user.upsert({
-    where: { username: user.login },
-    create: {
-      avatar: user.avatar_url || getAvatarFromInitials(user.name),
-      name: user.name,
-      username: user.login,
-      githubApiProfileUrl: user.url,
-      githubProfileUrl: user.html_url,
-      role: students.includes(user.login)
-        ? 'student'
-        : teachers.includes(user.login)
-        ? 'teacher'
-        : 'guest',
-    },
-    update: {},
-  })
 }
