@@ -24,9 +24,9 @@ export async function findOrCreateUser(data: UserResponse) {
       avatar: data.avatar_url
         ? data.avatar_url
         : getAvatarFromInitials(data.name),
-      role: students.includes(data.login)
+      role: students.includes(data.login.toLowerCase())
         ? Role.STUDENT
-        : teachers.includes(data.login)
+        : teachers.includes(data.login.toLowerCase())
         ? Role.TEACHER
         : Role.GUEST,
       grade: 0,

@@ -1,6 +1,9 @@
 export const students = [
-  // TODO: Get the rest of the usernames
   'asynched',
+  'worshx',
+  'marcusribeir0',
+  'matheusfarali',
+  'marinhogustavo',
 ]
 
 export const teachers = ['mrebello']
