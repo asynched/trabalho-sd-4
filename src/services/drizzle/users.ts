@@ -65,7 +65,8 @@ export async function getUserFromSession(sessionId: string) {
   const userResult = await db
     .select()
     .from(users)
-    .innerJoin(sessions, eq(sessions.sessionId, sessionId))
+    .innerJoin(sessions, eq(sessions.userId, users.userId))
+    .where(eq(sessions.sessionId, sessionId))
     .limit(1)
 
   return userResult[0]?.users || null
