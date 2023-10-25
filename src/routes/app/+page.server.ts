@@ -24,7 +24,7 @@ export const load: PageServerLoad = async (event) => {
     user,
   }
 
-  if (user.role === Role.STUDENT) {
+  if (user.role === Role.TEACHER) {
     const grades = await getUserGrades()
 
     data.studentGrades = grades
