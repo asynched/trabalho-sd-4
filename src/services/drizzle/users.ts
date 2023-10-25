@@ -19,7 +19,7 @@ export async function findOrCreateUser(data: UserResponse) {
   const rows = await db
     .insert(users)
     .values({
-      name: data.name,
+      name: data.name || data.login,
       username: data.login,
       avatar: data.avatar_url
         ? data.avatar_url
